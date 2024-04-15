@@ -26,6 +26,10 @@ resource "hcloud_server" "veilid-node" {
   datacenter  = local.datacenter
 
   keep_disk = false
+  # this is a bit of a hack, since if you don't set an SSH key here, Hetzner will send you an email
+  # with a root login password on server creation, even though we set an SSH key in the cloud-init
+  # script.
+  ssh_keys = [hcloud_ssh_key.veilid-key.id]
 
   user_data = base64encode(file("./setup-veilid.yaml"))
 
@@ -37,4 +41,9 @@ resource "hcloud_server" "veilid-node" {
     ipv4_enabled = true
     ipv6_enabled = true
   }
+}
+
+resource "hcloud_ssh_key" "veilid-key" {
+  name       = "veilid-key"
+  public_key = file("PATH_TO_SSH_KEY")
 }
