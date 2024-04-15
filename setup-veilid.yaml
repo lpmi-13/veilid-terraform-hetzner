@@ -1,0 +1,40 @@
+#cloud-config
+# Add groups to the system
+# Adds the ubuntu group with members 'root' and 'sys'
+# and the empty group veilid.
+groups:
+    - ubuntu: [root, sys]
+    - veilid
+
+# Add users to the system. Users are added after groups are added.
+users:
+    - default
+    - name: veilid
+      gecos: veilid
+      shell: /bin/bash
+      primary_group: veilid
+      sudo: ALL=(ALL) NOPASSWD:ALL
+      groups: users, admin
+      lock_passwd: false
+      ssh_authorized_keys:
+        # put the value of the ssh-key you want to use here
+        # EXAMPLE:
+        # - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJe9HjHZOezXLcgfZ4pwQUbwDYP3Ne9HzlwPtponRQOu
+
+
+# sets up veilid to run automatically
+runcmd:
+    - wget -O- https://packages.veilid.net/gpg/veilid-packages-key.public | sudo gpg --dearmor -o /usr/share/keyrings/veilid-packages-keyring.gpg
+    - echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/veilid-packages-keyring.gpg] https://packages.veilid.net/apt stable main" | sudo tee /etc/apt/sources.list.d/veilid.list 1>/dev/null
+    - apt update
+    - sudo apt install veilid-server veilid-cli
+    - sudo systemctl enable --now veilid-server.service
+    - sudo systemctl start veilid-server.service
+
+# set up automatic updates just for these two packages every wednesday at 5AM
+write_files:
+  - owner: root:root
+    path: /etc/crontab
+    content: |
+        0 5 * * 3 root /usr/bin/apt update -y
+        5 5 * * 3 root DEBIAN_FRONTEND=noninteractive /usr/bin/apt install --only-upgrade veilid-server veilid-cli -y
