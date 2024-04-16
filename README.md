@@ -1,5 +1,7 @@
 # Veilid Terraform Hetzner
 
+Details at https://veilid.com/
+
 Run a veilid node on Hetzner cloud. Hetzner doesn't have a free tier, but it's very cheap (approx $5/month), and should be pretty easy.
 
 ## Setup
