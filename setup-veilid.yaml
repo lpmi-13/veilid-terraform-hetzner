@@ -21,7 +21,6 @@ users:
         # EXAMPLE:
         # - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJe9HjHZOezXLcgfZ4pwQUbwDYP3Ne9HzlwPtponRQOu
 
-
 # sets up veilid to run automatically
 runcmd:
     - wget -O- https://packages.veilid.net/gpg/veilid-packages-key.public | sudo gpg --dearmor -o /usr/share/keyrings/veilid-packages-keyring.gpg
