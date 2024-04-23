@@ -34,15 +34,14 @@ resource "hcloud_server" "veilid-node" {
   user_data = base64encode(file("./setup-veilid.yaml"))
 
   public_net {
-    # If your ISP is fancy and gives you an IPV6 address, then you can turn off this IPV4 allocation
-    # It will save you about 0.60 EUR/month
-    # ...you can also turn it off if you just want to leave the node running for a while. The veilid
-    # server will happily use the IPV6 address to communicate with the network.
-    ipv4_enabled = true
+    # set this to "true" to configure an IPv4 address if you need that for SSH access.
+    ipv4_enabled = false
     ipv6_enabled = true
   }
 }
 
+# same part of the hack (see note above). You can either generate this key locally following the
+# steps in the README, or point it to another key on your system.
 resource "hcloud_ssh_key" "veilid-key" {
   name       = "veilid-key"
   public_key = file("PATH_TO_SSH_KEY")
