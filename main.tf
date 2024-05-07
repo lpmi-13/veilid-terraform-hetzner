@@ -38,6 +38,42 @@ resource "hcloud_server" "veilid-node" {
     ipv4_enabled = false
     ipv6_enabled = true
   }
+
+  firewall_ids = [hcloud_firewall.veilid-firewall.id]
+}
+
+resource "hcloud_firewall" "veilid-firewall" {
+  name = "veilid"
+  rule {
+    description = "this is for SSH access"
+    direction   = "in"
+    protocol    = "tcp"
+    port        = "22"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "5150"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+
+  rule {
+    direction = "in"
+    protocol  = "udp"
+    port      = "5150"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
 }
 
 # same part of the hack (see note above). You can either generate this key locally following the
